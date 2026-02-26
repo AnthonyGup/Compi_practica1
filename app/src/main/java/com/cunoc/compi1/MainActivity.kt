@@ -1,109 +1,156 @@
 package com.cunoc.compi1
 
-import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.cunoc.compi1.nodos.ConfigBuilder
+import com.cunoc.compi1.nodos.Configuracion
+import com.cunoc.compi1.nodos.GraphBuilder
+import com.cunoc.compi1.nodos.DiagramaFlujoView
+import com.cunoc.compi1.nodos.Nodo
 import compi.practica_1_compi.lexer.Lexer
-import compi.practica_1_compi.parser.sym
+import compi.practica_1_compi.parser.parser
 import java.io.StringReader
 
 class MainActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.activity_main)
 
-        val inputText = findViewById<EditText>(R.id.inputText)
-        val analyzeButton = findViewById<Button>(R.id.analyzeButton)
+            val inputText = findViewById<EditText>(R.id.inputText)
+            val analyzeButton = findViewById<Button>(R.id.analyzeButton)
+            val regresarButton = findViewById<Button>(R.id.backButton)
+            val container = findViewById<FrameLayout>(R.id.diagramContainer)
 
-        analyzeButton.setOnClickListener {
-            val codigo = inputText.text.toString()
+            analyzeButton.setOnClickListener {
+                val codigo = inputText.text.toString()
+                if (codigo.isBlank()) {
+                    inputText.error = "Ingrese pseudocódigo"
+                    return@setOnClickListener
+                }
+                try {
+                    val lexer = Lexer(StringReader(codigo))
+                    val parser = parser(lexer)
+                    var parseException: Exception? = null
 
-            if (codigo.isBlank()) {
-                inputText.error = "Ingrese pseudocódigo"
-                return@setOnClickListener
-            }
+                    try {
+                        parser.parse()
+                    } catch (e: Exception) {
+                        parseException = e
+                    }
 
-            colorearCodigo(inputText)
-        }
-    }
+                    val erroresLexicos = lexer.getLexicalErrors()
+                    if (erroresLexicos.isNotEmpty()) {
+                        inputText.error = buildDetailedErrorReport(
+                            titulo = "Errores lexicos",
+                            errores = erroresLexicos,
+                            codigo = codigo,
+                            recomendacion = "Revisa caracteres invalidos y formato de literales (cadenas, numeros y colores)."
+                        )
+                        return@setOnClickListener
+                    }
 
-    private fun colorearCodigo(editText: EditText) {
-        val texto = editText.text.toString()
-        val spannable = SpannableString(texto)
+                    val errores = parser.getSyntaxErrors()
+                    if (errores.isNotEmpty()) {
+                        inputText.error = buildDetailedErrorReport(
+                            titulo = "Errores sintacticos",
+                            errores = errores,
+                            codigo = codigo,
+                            recomendacion = "Verifica parentesis, palabras reservadas (INICIO/FIN, SI/FINSI, MIENTRAS/FINMIENTRAS) y separadores."
+                        )
+                        return@setOnClickListener
+                    }
 
-        val lexer = Lexer(StringReader(texto))
-        var token = lexer.next_token()
+                    if (parseException != null) {
+                        inputText.error = buildExceptionReport(parseException, codigo)
+                        return@setOnClickListener
+                    }
 
-        while (token.sym != sym.EOF) {
-            val start = token.left   // ahora son offsets absolutos
-            val end = token.right
+                    val tokens = lexer.getTokens()
+                    val nodos: List<Nodo> = GraphBuilder.construir(tokens)
+                    val configuraciones: Map<String, Map<Int, Configuracion>> = ConfigBuilder.construir(tokens)
 
-            if (start >= 0 && end <= texto.length && end > start) {
-                val color = when (token.sym) {
-                    sym.INICIO, sym.FIN, sym.VAR, sym.SI, sym.ENTONCES,
-                    sym.FINSI, sym.MIENTRAS, sym.HACER, sym.FINMIENTRAS,
-                    sym.MOSTRAR, sym.LEER -> Color.BLUE
+                    val diagramaView = DiagramaFlujoView(this)
+                    diagramaView.nodos = nodos
+                    diagramaView.configuraciones = configuraciones
 
-                    sym.MAS, sym.MENOS, sym.POR, sym.DIV,
-                    sym.IGUAL, sym.DIFERENTE, sym.MAYOR,
-                    sym.MENOR, sym.MAYOR_IGUAL, sym.MENOR_IGUAL,
-                    sym.AND, sym.OR, sym.NOT, sym.ASIGNACION -> Color.MAGENTA
+                    container.removeAllViews()
+                    container.addView(diagramaView)
 
-                    sym.ENTERO, sym.DECIMAL -> Color.rgb(0, 150, 0)
-                    else -> Color.BLACK
+                } catch (e: Exception) {
+                    inputText.error = buildExceptionReport(e, codigo)
                 }
 
-                spannable.setSpan(
-                    ForegroundColorSpan(color),
-                    start,
-                    end,
-                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
             }
 
-            token = lexer.next_token()
-        }
-
-        // Colorear errores léxicos en rojo (estos siguen viniendo con línea/columna)
-        lexer.getLexicalErrors().forEach { error ->
-            val linea = Regex("Línea: (\\d+)").find(error)?.groupValues?.get(1)?.toInt() ?: return@forEach
-            val columna = Regex("Columna: (\\d+)").find(error)?.groupValues?.get(1)?.toInt() ?: return@forEach
-            val index = calcularIndice(texto, linea, columna)
-            if (index in texto.indices) {
-                spannable.setSpan(
-                    ForegroundColorSpan(Color.RED),
-                    index,
-                    index + 1,
-                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+            regresarButton.setOnClickListener {
+                container.removeAllViews() // Limpia el diagrama
             }
         }
 
-        editText.text = Editable.Factory.getInstance().newEditable(spannable)
+    private fun buildDetailedErrorReport(
+        titulo: String,
+        errores: List<String>,
+        codigo: String,
+        recomendacion: String
+    ): String {
+        val maxErrores = 5
+        val mensaje = StringBuilder()
+            .append(titulo)
+            .append(" (")
+            .append(errores.size)
+            .append(")")
+
+        errores.take(maxErrores).forEachIndexed { index, error ->
+            mensaje.append("\n").append(index + 1).append(") ").append(error)
+
+            val contexto = extractContext(error, codigo)
+            if (contexto != null) {
+                mensaje.append("\n   -> ").append(contexto)
+            }
+        }
+
+        if (errores.size > maxErrores) {
+            mensaje
+                .append("\n...")
+                .append("\nSe omitieron ")
+                .append(errores.size - maxErrores)
+                .append(" errores adicionales")
+        }
+
+        mensaje.append("\nSugerencia: ").append(recomendacion)
+        return mensaje.toString()
     }
 
-
-
-    private fun calcularIndice(texto: String, linea: Int, columna: Int): Int {
-        var l = 1
-        var c = 1
-
-        for (i in texto.indices) {
-            if (l == linea && c == columna) return i
-
-            if (texto[i] == '\n') {
-                l++
-                c = 1
-            } else {
-                c++
-            }
+    private fun buildExceptionReport(e: Exception, codigo: String): String {
+        val frame = e.stackTrace.firstOrNull()
+        val origen = if (frame != null) {
+            "${frame.className}.${frame.methodName}(${frame.fileName}:${frame.lineNumber})"
+        } else {
+            "No disponible"
         }
-        return -1
+
+        val primeraLinea = codigo.lineSequence().firstOrNull()?.take(120) ?: "Entrada vacia"
+
+        return StringBuilder()
+            .append("Fallo interno durante el analisis")
+            .append("\nTipo: ").append(e::class.java.simpleName)
+            .append("\nMensaje: ").append(e.message ?: "Sin detalle")
+            .append("\nOrigen: ").append(origen)
+            .append("\nContexto de entrada: ").append(primeraLinea)
+            .toString()
+    }
+
+    private fun extractContext(error: String, codigo: String): String? {
+        val lineRegex = Regex("L[ií]nea:\\s*(\\d+)", RegexOption.IGNORE_CASE)
+        val lineNumber = lineRegex.find(error)?.groupValues?.getOrNull(1)?.toIntOrNull() ?: return null
+
+        val lineas = codigo.lines()
+        if (lineNumber <= 0 || lineNumber > lineas.size) return null
+
+        return "Linea $lineNumber: ${lineas[lineNumber - 1].trim()}"
     }
 }

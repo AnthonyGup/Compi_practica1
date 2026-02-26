@@ -1,0 +1,186 @@
+package compi.practica_1_compi.parser;
+
+import java_cup.runtime.Symbol;
+
+parser code {:
+    private java.util.List<String> syntaxErrors = new java.util.ArrayList<>();
+
+    public java.util.List<String> getSyntaxErrors() {
+        return syntaxErrors;
+    }
+
+    @Override
+    public void report_error(String message, Object info) {
+        if (info instanceof java_cup.runtime.Symbol) {
+            java_cup.runtime.Symbol s = (java_cup.runtime.Symbol) info;
+            String unexpected = (s.value != null) ? s.value.toString() : sym.terminalNames[s.sym];
+            syntaxErrors.add(
+                "Sintáctico -> Línea: " + s.left +
+                " Columna: " + s.right +
+                " Token inesperado: '" + unexpected + "'" +
+                " | Mensaje: " + message
+            );
+        } else {
+            syntaxErrors.add("Sintáctico -> " + message);
+        }
+    }
+
+    @Override
+    public void report_fatal_error(String message, Object info) throws Exception {
+        if (info instanceof java_cup.runtime.Symbol) {
+            java_cup.runtime.Symbol s = (java_cup.runtime.Symbol) info;
+            String unexpected = (s.value != null) ? s.value.toString() : sym.terminalNames[s.sym];
+            syntaxErrors.add(
+                "Fatal -> Línea: " + s.left +
+                " Columna: " + s.right +
+                " Token inesperado: '" + unexpected + "'" +
+                " | Mensaje: " + message
+            );
+        } else {
+            syntaxErrors.add("Fatal -> " + message);
+        }
+        super.report_fatal_error(message, info);
+    }
+:}
+
+/* ----------- TERMINALES ----------- */
+
+terminal INICIO, FIN, VAR, SI, ENTONCES, FINSI;
+terminal MIENTRAS, HACER, FINMIENTRAS;
+terminal MOSTRAR, LEER;
+
+terminal MAS, MENOS, POR, DIV;
+terminal IGUAL, DIFERENTE, MAYOR, MENOR, MAYOR_IGUAL, MENOR_IGUAL;
+terminal AND, OR, NOT;
+
+terminal ASIGNACION;
+terminal PAREN_IZQ, PAREN_DER;
+terminal SEPARADOR;
+terminal BARRA, COMA;
+
+terminal DEFAULT;
+terminal COLOR_TEXTO_SI, COLOR_SI, FIGURA_SI, LETRA_SI, LETRA_SIZE_SI;
+terminal COLOR_TEXTO_MIENTRAS, COLOR_MIENTRAS, FIGURA_MIENTRAS;
+terminal LETRA_MIENTRAS, LETRA_SIZE_MIENTRAS;
+terminal COLOR_TEXTO_BLOQUE, COLOR_BLOQUE, FIGURA_BLOQUE;
+terminal LETRA_BLOQUE, LETRA_SIZE_BLOQUE;
+
+terminal ELIPSE, CIRCULO, PARALELOGRAMO, RECTANGULO, ROMBO, RECTANGULO_REDONDEADO;
+terminal ARIAL, TIMES_NEW_ROMAN, COMIC_SANS, VERDANA;
+
+terminal String ID;
+terminal String ENTERO;
+terminal String DECIMAL;
+terminal String CADENA;
+
+/* ----------- NO TERMINALES ----------- */
+
+non terminal inicio;
+non terminal algoritmo;
+non terminal bloque;
+non terminal instruccion;
+non terminal asignacion;
+non terminal declaracion;
+non terminal mostrar;
+non terminal leer;
+non terminal si;
+non terminal mientras;
+non terminal expresion;
+non terminal termino;
+non terminal factor;
+
+non terminal configuracion;
+non terminal lista_config;
+non terminal config;
+
+/* ----------- PRECEDENCIA ------------ */
+precedence left MAS, MENOS;
+precedence left POR, DIV;
+
+/* ----------- GRAMÁTICA ----------- */
+
+inicio ::= algoritmo SEPARADOR configuracion
+         | algoritmo
+         ;
+
+algoritmo ::= INICIO bloque FIN
+            ;
+
+bloque ::= bloque instruccion
+         | instruccion
+         ;
+
+instruccion ::= declaracion
+              | asignacion
+              | mostrar
+              | leer
+              | si
+              | mientras
+              ;
+
+declaracion ::= VAR ID
+              | VAR ID ASIGNACION expresion
+              ;
+
+asignacion ::= ID ASIGNACION expresion
+             ;
+
+mostrar ::= MOSTRAR CADENA
+          | MOSTRAR ID
+          ;
+
+leer ::= LEER ID
+       ;
+
+si ::= SI PAREN_IZQ expresion PAREN_DER ENTONCES bloque FINSI
+     ;
+
+mientras ::= MIENTRAS PAREN_IZQ expresion PAREN_DER HACER bloque FINMIENTRAS
+           ;
+
+/* ----------- EXPRESIONES ----------- */
+
+expresion ::= expresion MAS termino
+            | expresion MENOS termino
+            | termino
+            ;
+
+termino ::= termino POR factor
+          | termino DIV factor
+          | factor
+          ;
+
+factor ::= ENTERO
+         | DECIMAL
+         | ID
+         | PAREN_IZQ expresion PAREN_DER
+         ;
+
+/* ----------- CONFIGURACIÓN ----------- */
+
+configuracion ::= lista_config
+                ;
+
+lista_config ::= lista_config config
+               | config
+               ;
+
+config ::= DEFAULT ASIGNACION ENTERO
+         | COLOR_TEXTO_SI ASIGNACION expresion BARRA ENTERO
+         | COLOR_SI ASIGNACION expresion BARRA ENTERO
+         | FIGURA_SI ASIGNACION ID BARRA ENTERO
+         | LETRA_SI ASIGNACION ID BARRA ENTERO
+         | LETRA_SIZE_SI ASIGNACION expresion BARRA ENTERO
+
+         | COLOR_TEXTO_MIENTRAS ASIGNACION expresion BARRA ENTERO
+         | COLOR_MIENTRAS ASIGNACION expresion BARRA ENTERO
+         | FIGURA_MIENTRAS ASIGNACION ID BARRA ENTERO
+         | LETRA_MIENTRAS ASIGNACION ID BARRA ENTERO
+         | LETRA_SIZE_MIENTRAS ASIGNACION expresion BARRA ENTERO
+
+         | COLOR_TEXTO_BLOQUE ASIGNACION expresion BARRA ENTERO
+         | COLOR_BLOQUE ASIGNACION expresion BARRA ENTERO
+         | FIGURA_BLOQUE ASIGNACION ID BARRA ENTERO
+         | LETRA_BLOQUE ASIGNACION ID BARRA ENTERO
+         | LETRA_SIZE_BLOQUE ASIGNACION expresion BARRA ENTERO
+         ;

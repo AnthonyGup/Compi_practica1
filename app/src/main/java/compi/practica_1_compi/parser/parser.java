@@ -5,6 +5,8 @@
 
 package compi.practica_1_compi.parser;
 
+import java_cup.runtime.XMLElement;
+
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
  */
 @SuppressWarnings({"rawtypes"})
@@ -338,10 +340,12 @@ public class parser extends java_cup.runtime.lr_parser {
     @Override
     public void report_error(String message, Object info) {
         if (info instanceof java_cup.runtime.Symbol s) {
+            String unexpected = (s.value != null) ? s.value.toString() : sym.terminalNames[s.sym];
             syntaxErrors.add(
                     "Sintáctico -> Línea: " + s.left +
                             " Columna: " + s.right +
-                            " " + message
+                            " Token inesperado: '" + unexpected + "'" +
+                            " | Mensaje: " + message
             );
         } else {
             syntaxErrors.add("Sintáctico -> " + message);
@@ -351,509 +355,512 @@ public class parser extends java_cup.runtime.lr_parser {
     @Override
     public void report_fatal_error(String message, Object info) throws Exception {
         if (info instanceof java_cup.runtime.Symbol s) {
+            String unexpected = (s.value != null) ? s.value.toString() : sym.terminalNames[s.sym];
             syntaxErrors.add(
                     "Fatal -> Línea: " + s.left +
                             " Columna: " + s.right +
-                            " " + message
+                            " Token inesperado: '" + unexpected + "'" +
+                            " | Mensaje: " + message
             );
         } else {
             syntaxErrors.add("Fatal -> " + message);
         }
         super.report_fatal_error(message, info);
     }
-}
 
 
-/** Cup generated class to encapsulate user supplied action code.*/
-@SuppressWarnings({"rawtypes", "unchecked", "unused"})
-class CUP$parser$actions {
-    private final parser parser;
+    /** Cup generated class to encapsulate user supplied action code.*/
+    @SuppressWarnings({"rawtypes", "unchecked", "unused"})
+    class CUP$parser$actions {
+        private final parser parser;
 
-    /** Constructor */
-    CUP$parser$actions(parser parser) {
-        this.parser = parser;
-    }
-
-    /** Method 0 with the actual generated action code for actions 0 to 300. */
-    public final java_cup.runtime.Symbol CUP$parser$do_action_part00000000(
-            int                        CUP$parser$act_num,
-            java_cup.runtime.lr_parser CUP$parser$parser,
-            java.util.Stack            CUP$parser$stack,
-            int                        CUP$parser$top)
-            throws java.lang.Exception
-    {
-        /* Symbol object for return from actions */
-        java_cup.runtime.Symbol CUP$parser$result;
-
-        /* select the action based on the action number */
-        switch (CUP$parser$act_num)
-        {
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 0: // inicio ::= algoritmo SEPARADOR configuracion
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("inicio",0, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 1: // $START ::= inicio EOF
-            {
-                Object RESULT =null;
-                int start_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-                int start_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
-                Object start_val = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-                RESULT = start_val;
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("$START",0, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            /* ACCEPT */
-            CUP$parser$parser.done_parsing();
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 2: // inicio ::= algoritmo
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("inicio",0, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 3: // algoritmo ::= INICIO bloque FIN
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("algoritmo",1, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 4: // bloque ::= bloque instruccion
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("bloque",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 5: // bloque ::= instruccion
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("bloque",2, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 6: // instruccion ::= declaracion
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 7: // instruccion ::= asignacion
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 8: // instruccion ::= mostrar
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 9: // instruccion ::= leer
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 10: // instruccion ::= si
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 11: // instruccion ::= mientras
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 12: // declaracion ::= VAR ID
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("declaracion",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 13: // declaracion ::= VAR ID ASIGNACION expresion
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("declaracion",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 14: // asignacion ::= ID ASIGNACION expresion
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("asignacion",4, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 15: // mostrar ::= MOSTRAR CADENA
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("mostrar",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 16: // mostrar ::= MOSTRAR ID
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("mostrar",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 17: // leer ::= LEER ID
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("leer",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 18: // si ::= SI PAREN_IZQ expresion PAREN_DER ENTONCES bloque FINSI
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("si",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 19: // mientras ::= MIENTRAS PAREN_IZQ expresion PAREN_DER HACER bloque FINMIENTRAS
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("mientras",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 20: // expresion ::= expresion MAS termino
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("expresion",10, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 21: // expresion ::= expresion MENOS termino
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("expresion",10, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 22: // expresion ::= termino
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("expresion",10, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 23: // termino ::= termino POR factor
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("termino",11, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 24: // termino ::= termino DIV factor
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("termino",11, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 25: // termino ::= factor
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("termino",11, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 26: // factor ::= ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",12, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 27: // factor ::= DECIMAL
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",12, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 28: // factor ::= ID
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",12, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 29: // factor ::= PAREN_IZQ expresion PAREN_DER
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",12, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 30: // configuracion ::= lista_config
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("configuracion",13, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 31: // lista_config ::= lista_config config
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("lista_config",14, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 32: // lista_config ::= config
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("lista_config",14, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 33: // config ::= DEFAULT ASIGNACION ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 34: // config ::= COLOR_TEXTO_SI ASIGNACION expresion BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 35: // config ::= COLOR_SI ASIGNACION expresion BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 36: // config ::= FIGURA_SI ASIGNACION ID BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 37: // config ::= LETRA_SI ASIGNACION ID BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 38: // config ::= LETRA_SIZE_SI ASIGNACION expresion BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 39: // config ::= COLOR_TEXTO_MIENTRAS ASIGNACION expresion BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 40: // config ::= COLOR_MIENTRAS ASIGNACION expresion BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 41: // config ::= FIGURA_MIENTRAS ASIGNACION ID BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 42: // config ::= LETRA_MIENTRAS ASIGNACION ID BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 43: // config ::= LETRA_SIZE_MIENTRAS ASIGNACION expresion BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 44: // config ::= COLOR_TEXTO_BLOQUE ASIGNACION expresion BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 45: // config ::= COLOR_BLOQUE ASIGNACION expresion BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 46: // config ::= FIGURA_BLOQUE ASIGNACION ID BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 47: // config ::= LETRA_BLOQUE ASIGNACION ID BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /*. . . . . . . . . . . . . . . . . . . .*/
-            case 48: // config ::= LETRA_SIZE_BLOQUE ASIGNACION expresion BARRA ENTERO
-            {
-                Object RESULT =null;
-
-                CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
-            }
-            return CUP$parser$result;
-
-            /* . . . . . .*/
-            default:
-                throw new Exception(
-                        "Invalid action number "+CUP$parser$act_num+"found in internal parse table");
-
+        /** Constructor */
+        CUP$parser$actions(parser parser) {
+            this.parser = parser;
         }
-    } /* end of method */
 
-    /** Method splitting the generated action code into several parts. */
-    public final java_cup.runtime.Symbol CUP$parser$do_action(
-            int                        CUP$parser$act_num,
-            java_cup.runtime.lr_parser CUP$parser$parser,
-            java.util.Stack            CUP$parser$stack,
-            int                        CUP$parser$top)
-            throws java.lang.Exception
-    {
-        return CUP$parser$do_action_part00000000(
-                CUP$parser$act_num,
-                CUP$parser$parser,
-                CUP$parser$stack,
-                CUP$parser$top);
+        /** Method 0 with the actual generated action code for actions 0 to 300. */
+        public final java_cup.runtime.Symbol CUP$parser$do_action_part00000000(
+                int                        CUP$parser$act_num,
+                java_cup.runtime.lr_parser CUP$parser$parser,
+                java.util.Stack            CUP$parser$stack,
+                int                        CUP$parser$top)
+                throws java.lang.Exception
+        {
+            /* Symbol object for return from actions */
+            java_cup.runtime.Symbol CUP$parser$result;
+
+            /* select the action based on the action number */
+            switch (CUP$parser$act_num)
+            {
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 0: // inicio ::= algoritmo SEPARADOR configuracion
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("inicio",0, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 1: // $START ::= inicio EOF
+                {
+                    Object RESULT =null;
+                    int start_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+                    int start_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+                    Object start_val = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+                    RESULT = start_val;
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("$START",0, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                /* ACCEPT */
+                CUP$parser$parser.done_parsing();
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 2: // inicio ::= algoritmo
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("inicio",0, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 3: // algoritmo ::= INICIO bloque FIN
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("algoritmo",1, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 4: // bloque ::= bloque instruccion
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("bloque",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 5: // bloque ::= instruccion
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("bloque",2, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 6: // instruccion ::= declaracion
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 7: // instruccion ::= asignacion
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 8: // instruccion ::= mostrar
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 9: // instruccion ::= leer
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 10: // instruccion ::= si
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 11: // instruccion ::= mientras
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("instruccion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 12: // declaracion ::= VAR ID
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("declaracion",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 13: // declaracion ::= VAR ID ASIGNACION expresion
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("declaracion",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 14: // asignacion ::= ID ASIGNACION expresion
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("asignacion",4, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 15: // mostrar ::= MOSTRAR CADENA
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("mostrar",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 16: // mostrar ::= MOSTRAR ID
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("mostrar",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 17: // leer ::= LEER ID
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("leer",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 18: // si ::= SI PAREN_IZQ expresion PAREN_DER ENTONCES bloque FINSI
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("si",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 19: // mientras ::= MIENTRAS PAREN_IZQ expresion PAREN_DER HACER bloque FINMIENTRAS
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("mientras",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 20: // expresion ::= expresion MAS termino
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("expresion",10, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 21: // expresion ::= expresion MENOS termino
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("expresion",10, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 22: // expresion ::= termino
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("expresion",10, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 23: // termino ::= termino POR factor
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("termino",11, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 24: // termino ::= termino DIV factor
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("termino",11, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 25: // termino ::= factor
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("termino",11, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 26: // factor ::= ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",12, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 27: // factor ::= DECIMAL
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",12, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 28: // factor ::= ID
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",12, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 29: // factor ::= PAREN_IZQ expresion PAREN_DER
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",12, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 30: // configuracion ::= lista_config
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("configuracion",13, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 31: // lista_config ::= lista_config config
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("lista_config",14, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 32: // lista_config ::= config
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("lista_config",14, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 33: // config ::= DEFAULT ASIGNACION ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 34: // config ::= COLOR_TEXTO_SI ASIGNACION expresion BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 35: // config ::= COLOR_SI ASIGNACION expresion BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 36: // config ::= FIGURA_SI ASIGNACION ID BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 37: // config ::= LETRA_SI ASIGNACION ID BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 38: // config ::= LETRA_SIZE_SI ASIGNACION expresion BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 39: // config ::= COLOR_TEXTO_MIENTRAS ASIGNACION expresion BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 40: // config ::= COLOR_MIENTRAS ASIGNACION expresion BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 41: // config ::= FIGURA_MIENTRAS ASIGNACION ID BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 42: // config ::= LETRA_MIENTRAS ASIGNACION ID BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 43: // config ::= LETRA_SIZE_MIENTRAS ASIGNACION expresion BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 44: // config ::= COLOR_TEXTO_BLOQUE ASIGNACION expresion BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 45: // config ::= COLOR_BLOQUE ASIGNACION expresion BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 46: // config ::= FIGURA_BLOQUE ASIGNACION ID BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 47: // config ::= LETRA_BLOQUE ASIGNACION ID BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /*. . . . . . . . . . . . . . . . . . . .*/
+                case 48: // config ::= LETRA_SIZE_BLOQUE ASIGNACION expresion BARRA ENTERO
+                {
+                    Object RESULT =null;
+
+                    CUP$parser$result = parser.getSymbolFactory().newSymbol("config",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+                }
+                return CUP$parser$result;
+
+                /* . . . . . .*/
+                default:
+                    throw new Exception(
+                            "Invalid action number "+CUP$parser$act_num+"found in internal parse table");
+
+            }
+        } /* end of method */
+
+        /** Method splitting the generated action code into several parts. */
+        public final java_cup.runtime.Symbol CUP$parser$do_action(
+                int                        CUP$parser$act_num,
+                java_cup.runtime.lr_parser CUP$parser$parser,
+                java.util.Stack            CUP$parser$stack,
+                int                        CUP$parser$top)
+                throws java.lang.Exception
+        {
+            return CUP$parser$do_action_part00000000(
+                    CUP$parser$act_num,
+                    CUP$parser$parser,
+                    CUP$parser$stack,
+                    CUP$parser$top);
+        }
     }
+
 }
