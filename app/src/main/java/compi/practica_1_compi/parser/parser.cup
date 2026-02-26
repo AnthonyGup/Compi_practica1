@@ -92,8 +92,14 @@ non terminal factor;
 non terminal configuracion;
 non terminal lista_config;
 non terminal config;
+non terminal figura_valor;
+non terminal letra_valor;
 
 /* ----------- PRECEDENCIA ------------ */
+precedence left OR;
+precedence left AND;
+precedence right NOT;
+precedence nonassoc IGUAL, DIFERENTE, MAYOR, MENOR, MAYOR_IGUAL, MENOR_IGUAL;
 precedence left MAS, MENOS;
 precedence left POR, DIV;
 
@@ -142,6 +148,15 @@ mientras ::= MIENTRAS PAREN_IZQ expresion PAREN_DER HACER bloque FINMIENTRAS
 
 expresion ::= expresion MAS termino
             | expresion MENOS termino
+            | expresion IGUAL termino
+            | expresion DIFERENTE termino
+            | expresion MAYOR termino
+            | expresion MENOR termino
+            | expresion MAYOR_IGUAL termino
+            | expresion MENOR_IGUAL termino
+            | expresion AND expresion
+            | expresion OR expresion
+            | NOT expresion
             | termino
             ;
 
@@ -168,19 +183,35 @@ lista_config ::= lista_config config
 config ::= DEFAULT ASIGNACION ENTERO
          | COLOR_TEXTO_SI ASIGNACION expresion BARRA ENTERO
          | COLOR_SI ASIGNACION expresion BARRA ENTERO
-         | FIGURA_SI ASIGNACION ID BARRA ENTERO
-         | LETRA_SI ASIGNACION ID BARRA ENTERO
+         | FIGURA_SI ASIGNACION figura_valor BARRA ENTERO
+         | LETRA_SI ASIGNACION letra_valor BARRA ENTERO
          | LETRA_SIZE_SI ASIGNACION expresion BARRA ENTERO
 
          | COLOR_TEXTO_MIENTRAS ASIGNACION expresion BARRA ENTERO
          | COLOR_MIENTRAS ASIGNACION expresion BARRA ENTERO
-         | FIGURA_MIENTRAS ASIGNACION ID BARRA ENTERO
-         | LETRA_MIENTRAS ASIGNACION ID BARRA ENTERO
+         | FIGURA_MIENTRAS ASIGNACION figura_valor BARRA ENTERO
+         | LETRA_MIENTRAS ASIGNACION letra_valor BARRA ENTERO
          | LETRA_SIZE_MIENTRAS ASIGNACION expresion BARRA ENTERO
 
          | COLOR_TEXTO_BLOQUE ASIGNACION expresion BARRA ENTERO
          | COLOR_BLOQUE ASIGNACION expresion BARRA ENTERO
-         | FIGURA_BLOQUE ASIGNACION ID BARRA ENTERO
-         | LETRA_BLOQUE ASIGNACION ID BARRA ENTERO
+         | FIGURA_BLOQUE ASIGNACION figura_valor BARRA ENTERO
+         | LETRA_BLOQUE ASIGNACION letra_valor BARRA ENTERO
          | LETRA_SIZE_BLOQUE ASIGNACION expresion BARRA ENTERO
          ;
+
+figura_valor ::= ID
+               | ELIPSE
+               | CIRCULO
+               | PARALELOGRAMO
+               | RECTANGULO
+               | ROMBO
+               | RECTANGULO_REDONDEADO
+               ;
+
+letra_valor ::= ID
+              | ARIAL
+              | TIMES_NEW_ROMAN
+              | COMIC_SANS
+              | VERDANA
+              ;
