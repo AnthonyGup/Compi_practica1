@@ -17,20 +17,18 @@ object GraphBuilder {
                 sym.FIN -> nodos.add(FinNodo(i))
 
                 sym.VAR -> {
-                    val nombreToken = tokens.getOrNull(i + 1)
-                    if (nombreToken == null) {
+                    if (i + 1 >= tokens.size) {
                         i++
                         continue
                     }
+                    val nombreToken = tokens[i + 1]
 
                     val nombre = nombreToken.value.toString()
                     var valor: String? = null
 
                     if (i + 3 < tokens.size && tokens[i + 2].sym == sym.ASIGNACION) {
-                        val exprEnd = findExpressionEnd(tokens, i + 3)
-                        valor = tokens.subList(i + 3, exprEnd)
-                            .joinToString(" ") { it.value?.toString() ?: "" }
-                            .trim()
+                        val exprEnd = encontrarFinExpresion(tokens, i + 3)
+                        valor = tokensATexto(tokens, i + 3, exprEnd)
                         i = exprEnd - 1
                     } else {
                         i += 1
@@ -42,31 +40,35 @@ object GraphBuilder {
                 sym.ID -> {
                     if (i + 2 < tokens.size && tokens[i + 1].sym == sym.ASIGNACION) {
                         val nombre = tokens[i].value.toString()
-                        val exprEnd = findExpressionEnd(tokens, i + 2)
-                        val expr = tokens.subList(i + 2, exprEnd)
-                            .joinToString(" ") { it.value?.toString() ?: "" }
-                            .trim()
+                        val exprEnd = encontrarFinExpresion(tokens, i + 2)
+                        val expr = tokensATexto(tokens, i + 2, exprEnd)
                         nodos.add(AsignacionNodo(nombre, expr))
                         i = exprEnd - 1
                     }
                 }
 
                 sym.MOSTRAR -> {
-                    val mensaje = tokens.getOrNull(i + 1)?.value?.toString() ?: ""
+                    var mensaje = ""
+                    if (i + 1 < tokens.size) {
+                        mensaje = tokens[i + 1].value?.toString() ?: ""
+                    }
                     nodos.add(MostrarNodo(mensaje))
                     i++
                 }
 
                 sym.LEER -> {
-                    val variable = tokens.getOrNull(i + 1)?.value?.toString() ?: ""
+                    var variable = ""
+                    if (i + 1 < tokens.size) {
+                        variable = tokens[i + 1].value?.toString() ?: ""
+                    }
                     nodos.add(LeerNodo(variable))
                     i++
                 }
 
                 sym.SI -> {
-                    val condicion = readCondition(tokens, i)
-                    val bodyStart = indexAfter(tokens, i, sym.ENTONCES)
-                    val bodyEnd = findBlockEnd(tokens, bodyStart, sym.SI, sym.FINSI)
+                    val condicion = leerCondicion(tokens, i)
+                    val bodyStart = indiceDespues(tokens, i, sym.ENTONCES)
+                    val bodyEnd = encontrarFinBloque(tokens, bodyStart, sym.SI, sym.FINSI)
 
                     val bloque = if (bodyStart in 0 until bodyEnd && bodyEnd <= tokens.size) {
                         construir(tokens.subList(bodyStart, bodyEnd))
@@ -79,9 +81,9 @@ object GraphBuilder {
                 }
 
                 sym.MIENTRAS -> {
-                    val condicion = readCondition(tokens, i)
-                    val bodyStart = indexAfter(tokens, i, sym.HACER)
-                    val bodyEnd = findBlockEnd(tokens, bodyStart, sym.MIENTRAS, sym.FINMIENTRAS)
+                    val condicion = leerCondicion(tokens, i)
+                    val bodyStart = indiceDespues(tokens, i, sym.HACER)
+                    val bodyEnd = encontrarFinBloque(tokens, bodyStart, sym.MIENTRAS, sym.FINMIENTRAS)
 
                     val bloque = if (bodyStart in 0 until bodyEnd && bodyEnd <= tokens.size) {
                         construir(tokens.subList(bodyStart, bodyEnd))
@@ -100,8 +102,8 @@ object GraphBuilder {
 
     // Este método extrae el texto de la condición delimitada por paréntesis,
     // preservando el orden original de los tokens internos.
-    private fun readCondition(tokens: List<Symbol>, start: Int): String {
-        val open = indexAfter(tokens, start, sym.PAREN_IZQ)
+    private fun leerCondicion(tokens: List<Symbol>, start: Int): String {
+        val open = indiceDespues(tokens, start, sym.PAREN_IZQ)
         if (open == -1) return ""
 
         var close = open + 1
@@ -110,14 +112,12 @@ object GraphBuilder {
         }
         if (close >= tokens.size) return ""
 
-        return tokens.subList(open + 1, close)
-            .joinToString(" ") { it.value?.toString() ?: "" }
-            .trim()
+        return tokensATexto(tokens, open + 1, close)
     }
 
     // Este método localiza la primera aparición del símbolo objetivo y retorna
     // la posición inmediata siguiente para facilitar cortes de sublistas.
-    private fun indexAfter(tokens: List<Symbol>, start: Int, targetSym: Int): Int {
+    private fun indiceDespues(tokens: List<Symbol>, start: Int, targetSym: Int): Int {
         var i = start
         while (i < tokens.size) {
             if (tokens[i].sym == targetSym) return i + 1
@@ -128,7 +128,7 @@ object GraphBuilder {
 
     // Este método calcula el cierre de un bloque soportando anidación de estructuras
     // del mismo tipo mediante un contador de profundidad.
-    private fun findBlockEnd(
+    private fun encontrarFinBloque(
         tokens: List<Symbol>,
         from: Int,
         openSym: Int,
@@ -153,12 +153,12 @@ object GraphBuilder {
 
     // Este método determina dónde finaliza una expresión lineal antes del inicio
     // de la siguiente instrucción o sección de configuración.
-    private fun findExpressionEnd(tokens: List<Symbol>, from: Int): Int {
+    private fun encontrarFinExpresion(tokens: List<Symbol>, from: Int): Int {
         if (from !in tokens.indices) return from
 
         var i = from
         while (i < tokens.size) {
-            if (isExpressionBoundary(tokens, i, from)) {
+            if (esLimiteExpresion(tokens, i, from)) {
                 return i
             }
             i++
@@ -168,10 +168,10 @@ object GraphBuilder {
 
     // Este método define la regla de frontera de expresión para evitar consumir
     // tokens que pertenecen a la siguiente sentencia.
-    private fun isExpressionBoundary(tokens: List<Symbol>, current: Int, exprStart: Int): Boolean {
+    private fun esLimiteExpresion(tokens: List<Symbol>, current: Int, exprStart: Int): Boolean {
         if (current < exprStart || current >= tokens.size) return false
 
-        val statementStarters = setOf(
+        val statementStarters = intArrayOf(
             sym.INICIO,
             sym.FIN,
             sym.VAR,
@@ -200,7 +200,11 @@ object GraphBuilder {
             sym.LETRA_SIZE_BLOQUE
         )
 
-        if (tokens[current].sym in statementStarters) return true
+        for (starter in statementStarters) {
+            if (tokens[current].sym == starter) {
+                return true
+            }
+        }
 
         if (current > exprStart &&
             tokens[current].sym == sym.ID &&
@@ -211,5 +215,19 @@ object GraphBuilder {
         }
 
         return false
+    }
+
+    private fun tokensATexto(tokens: List<Symbol>, start: Int, end: Int): String {
+        val text = StringBuilder()
+        var i = start
+        while (i < end && i < tokens.size) {
+            if (text.isNotEmpty()) {
+                text.append(" ")
+            }
+            val value = tokens[i].value?.toString() ?: ""
+            text.append(value)
+            i++
+        }
+        return text.toString().trim()
     }
 }

@@ -4,7 +4,7 @@ object ParseErrorHelper {
 
     // Este método construye un reporte acotado de errores y agrega contexto de línea
     // para facilitar el diagnóstico sin saturar la salida.
-    fun buildDetailedErrorReport(
+    fun construirReporteDetalladoError(
         titulo: String,
         errores: List<String>,
         codigo: String,
@@ -12,26 +12,28 @@ object ParseErrorHelper {
     ): String {
         val maxErrores = 5
         val mensaje = StringBuilder()
-            .append(titulo)
-            .append(" (")
-            .append(errores.size)
-            .append(")")
+        mensaje.append(titulo)
+        mensaje.append(" (")
+        mensaje.append(errores.size)
+        mensaje.append(")")
 
-        errores.take(maxErrores).forEachIndexed { index, error ->
+        var index = 0
+        while (index < errores.size && index < maxErrores) {
+            val error = errores[index]
             mensaje.append("\n").append(index + 1).append(") ").append(error)
 
-            val contexto = extractContext(error, codigo)
+            val contexto = extraerContexto(error, codigo)
             if (contexto != null) {
                 mensaje.append("\n   -> ").append(contexto)
             }
+            index++
         }
 
         if (errores.size > maxErrores) {
-            mensaje
-                .append("\n...")
-                .append("\nSe omitieron ")
-                .append(errores.size - maxErrores)
-                .append(" errores adicionales")
+            mensaje.append("\n...")
+            mensaje.append("\nSe omitieron ")
+            mensaje.append(errores.size - maxErrores)
+            mensaje.append(" errores adicionales")
         }
 
         mensaje.append("\nSugerencia: ").append(recomendacion)
@@ -40,28 +42,39 @@ object ParseErrorHelper {
 
     // Este método resume una excepción interna y conserva el origen más cercano
     // del fallo para soporte técnico.
-    fun buildExceptionReport(e: Exception, codigo: String): String {
-        val frame = e.stackTrace.firstOrNull()
+    fun construirReporteExcepcion(e: Exception, codigo: String): String {
+        val frame = if (e.stackTrace.isNotEmpty()) e.stackTrace[0] else null
         val origen = if (frame != null) {
             "${frame.className}.${frame.methodName}(${frame.fileName}:${frame.lineNumber})"
         } else {
             "No disponible"
         }
 
-        val primeraLinea = codigo.lineSequence().firstOrNull()?.take(120) ?: "Entrada vacia"
+        val lineasCodigo = codigo.lines()
+        var primeraLinea = "Entrada vacia"
+        if (lineasCodigo.isNotEmpty()) {
+            primeraLinea = lineasCodigo[0]
+            if (primeraLinea.length > 120) {
+                primeraLinea = primeraLinea.substring(0, 120)
+            }
+        }
 
-        return StringBuilder()
-            .append("Fallo interno durante el analisis")
-            .append("\nTipo: ").append(e::class.java.simpleName)
-            .append("\nMensaje: ").append(e.message ?: "Sin detalle")
-            .append("\nOrigen: ").append(origen)
-            .append("\nContexto de entrada: ").append(primeraLinea)
-            .toString()
+        val mensaje = StringBuilder()
+        mensaje.append("Fallo interno durante el analisis")
+        mensaje.append("\nTipo: ")
+        mensaje.append(e::class.java.simpleName)
+        mensaje.append("\nMensaje: ")
+        mensaje.append(e.message ?: "Sin detalle")
+        mensaje.append("\nOrigen: ")
+        mensaje.append(origen)
+        mensaje.append("\nContexto de entrada: ")
+        mensaje.append(primeraLinea)
+        return mensaje.toString()
     }
 
     // Este método intenta recuperar la línea exacta asociada a un error textual
     // usando extracción por expresión regular.
-    private fun extractContext(error: String, codigo: String): String? {
+    private fun extraerContexto(error: String, codigo: String): String? {
         val lineRegex = Regex("L[ií]nea:\\s*(\\d+)", RegexOption.IGNORE_CASE)
         val lineNumber = lineRegex.find(error)?.groupValues?.getOrNull(1)?.toIntOrNull() ?: return null
 

@@ -28,13 +28,12 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            when (val result = DiagramAnalyzer.analyze(codigo)) {
+            when (val result = DiagramAnalyzer.analizar(codigo)) {
                 is AnalyzerError -> inputText.error = result.message
                 is AnalyzerSuccess -> {
-                    val diagramaView = DiagramaFlujoView(this).apply {
-                        nodos = result.nodos
-                        configuraciones = result.configuraciones
-                    }
+                    val diagramaView = DiagramaFlujoView(this)
+                    diagramaView.nodos = result.nodos
+                    diagramaView.configuraciones = result.configuraciones
                     container.removeAllViews()
                     container.addView(
                         diagramaView,

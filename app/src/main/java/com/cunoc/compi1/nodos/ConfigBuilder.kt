@@ -24,9 +24,9 @@ object ConfigBuilder {
             val token = tokens[i]
             when (token.sym) {
                 sym.DEFAULT -> {
-                    val targetIndex = parseDefaultIndex(tokens, i)
+                    val targetIndex = parsearIndicePorDefecto(tokens, i)
                     if (targetIndex != null) {
-                        putConfig(configs, "DEFAULT", targetIndex, targetIndex)
+                        ponerConfiguracion(configs, "DEFAULT", targetIndex, targetIndex)
                         i += 3
                         continue
                     }
@@ -47,9 +47,9 @@ object ConfigBuilder {
                 sym.FIGURA_BLOQUE,
                 sym.LETRA_BLOQUE,
                 sym.LETRA_SIZE_BLOQUE -> {
-                    val parsed = parseIndexedConfig(tokens, i, token.sym)
+                    val parsed = parsearConfiguracionIndexada(tokens, i, token.sym)
                     if (parsed != null) {
-                        putConfig(configs, parsed.key, parsed.indice, parsed.valor)
+                        ponerConfiguracion(configs, parsed.key, parsed.indice, parsed.valor)
                         i = parsed.nextIndex
                         continue
                     }
@@ -63,18 +63,22 @@ object ConfigBuilder {
 
     // Este método centraliza la escritura en el mapa para mantener una única ruta
     // de actualización por clave e índice.
-    private fun putConfig(
+    private fun ponerConfiguracion(
         configs: MutableMap<String, MutableMap<Int, Configuracion>>,
         key: String,
         indice: Int,
         valor: Any
     ) {
-        val perIndex = configs.getOrPut(key) { mutableMapOf() }
+        var perIndex = configs[key]
+        if (perIndex == null) {
+            perIndex = mutableMapOf()
+            configs[key] = perIndex
+        }
         perIndex[indice] = Configuracion(key, valor, indice)
     }
 
     // Este método valida y obtiene el índice objetivo de la directiva DEFAULT.
-    private fun parseDefaultIndex(tokens: List<Symbol>, start: Int): Int? {
+    private fun parsearIndicePorDefecto(tokens: List<Symbol>, start: Int): Int? {
         if (start + 2 >= tokens.size) return null
         if (tokens[start + 1].sym != sym.ASIGNACION) return null
         return tokens[start + 2].value?.toString()?.toIntOrNull()
@@ -82,7 +86,7 @@ object ConfigBuilder {
 
     // Este método parsea una configuración indexada con formato "clave = valor | índice",
     // identificando límites de valor antes de la barra vertical.
-    private fun parseIndexedConfig(tokens: List<Symbol>, start: Int, keySym: Int): ParsedConfig? {
+    private fun parsearConfiguracionIndexada(tokens: List<Symbol>, start: Int, keySym: Int): ParsedConfig? {
         if (start + 4 >= tokens.size) return null
         if (tokens[start + 1].sym != sym.ASIGNACION) return null
 
@@ -104,8 +108,8 @@ object ConfigBuilder {
             .trim()
         if (rawValue.isEmpty()) return null
 
-        val key = keyName(keySym)
-        val valor = parseValueByKey(keySym, rawValue)
+        val key = nombreClave(keySym)
+        val valor = parsearValorPorClave(keySym, rawValue)
 
         return ParsedConfig(
             key = key,
@@ -117,7 +121,7 @@ object ConfigBuilder {
 
     // Este método traduce el símbolo léxico de la clave al nombre canónico utilizado
     // por el sistema de render y aplicación de estilos.
-    private fun keyName(keySym: Int): String {
+    private fun nombreClave(keySym: Int): String {
         return when (keySym) {
             sym.COLOR_TEXTO_SI -> "COLOR_TEXTO_SI"
             sym.COLOR_SI -> "COLOR_SI"
@@ -140,14 +144,14 @@ object ConfigBuilder {
 
     // Este método aplica conversión tipada por tipo de configuración para evitar
     // conversiones ambiguas durante la fase de dibujo.
-    private fun parseValueByKey(keySym: Int, rawValue: String): Any {
+    private fun parsearValorPorClave(keySym: Int, rawValue: String): Any {
         return when (keySym) {
             sym.COLOR_TEXTO_SI,
             sym.COLOR_SI,
             sym.COLOR_TEXTO_MIENTRAS,
             sym.COLOR_MIENTRAS,
             sym.COLOR_TEXTO_BLOQUE,
-            sym.COLOR_BLOQUE -> parseColor(rawValue)
+            sym.COLOR_BLOQUE -> parsearColor(rawValue)
 
             sym.LETRA_SIZE_SI,
             sym.LETRA_SIZE_MIENTRAS,
@@ -159,7 +163,7 @@ object ConfigBuilder {
 
     // Este método interpreta colores en formato hexadecimal con prefijo H, RGB con comas
     // o formato reconocido por Android, con fallback seguro a negro.
-    private fun parseColor(rawValue: String): Int {
+    private fun parsearColor(rawValue: String): Int {
         val str = rawValue.trim().replace(" ", "")
         return try {
             when {

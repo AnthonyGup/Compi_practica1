@@ -24,23 +24,25 @@ class DiagramaFlujoView(context: Context) : View(context) {
             invalidate()
         }
 
-    private val shapePaint = Paint().apply {
-        color = Color.BLACK
-        style = Paint.Style.STROKE
-        strokeWidth = 4f
-    }
+    private val shapePaint = Paint()
 
-    private val textPaint = Paint().apply {
-        color = Color.BLACK
-        textSize = 40f
-        style = Paint.Style.FILL
-        strokeWidth = 1f
-    }
+    private val textPaint = Paint()
 
     private val topPadding = 100
     private val nodeHeight = 100
     private val nodeSpacing = 50
     private val bottomPadding = 100
+
+    init {
+        shapePaint.color = Color.BLACK
+        shapePaint.style = Paint.Style.STROKE
+        shapePaint.strokeWidth = 4f
+
+        textPaint.color = Color.BLACK
+        textPaint.textSize = 40f
+        textPaint.style = Paint.Style.FILL
+        textPaint.strokeWidth = 1f
+    }
 
     // Este método calcula el alto requerido para mostrar todos los nodos
     // y habilita desplazamiento vertical cuando excede el espacio visible.
@@ -58,7 +60,9 @@ class DiagramaFlujoView(context: Context) : View(context) {
 
         var y = 100f
 
-        for ((i, nodo) in nodos.withIndex()) {
+        var i = 0
+        while (i < nodos.size) {
+            val nodo = nodos[i]
             when (nodo) {
                 is InicioNodo -> {
                     aplicarDefault(i + 1)
@@ -78,7 +82,7 @@ class DiagramaFlujoView(context: Context) : View(context) {
                     aplicarDefault(i + 1)
                     aplicarConfig("COLOR_BLOQUE", i + 1) { shapePaint.color = it as Int }
                     aplicarConfig("LETRA_SIZE_BLOQUE", i + 1) { textPaint.textSize = it as Float }
-                    aplicarConfig("LETRA_BLOQUE", i + 1) { setTypeface(it.toString()) }
+                    aplicarConfig("LETRA_BLOQUE", i + 1) { establecerTipoLetra(it.toString()) }
                     dibujarFiguraBloque(canvas, y, obtenerFigura("FIGURA_BLOQUE", i + 1, "RECTANGULO"))
                     aplicarConfig("COLOR_TEXTO_BLOQUE", i + 1) { textPaint.color = it as Int }
 
@@ -94,7 +98,7 @@ class DiagramaFlujoView(context: Context) : View(context) {
                     aplicarDefault(i + 1)
                     aplicarConfig("COLOR_BLOQUE", i + 1) { shapePaint.color = it as Int }
                     aplicarConfig("LETRA_SIZE_BLOQUE", i + 1) { textPaint.textSize = it as Float }
-                    aplicarConfig("LETRA_BLOQUE", i + 1) { setTypeface(it.toString()) }
+                    aplicarConfig("LETRA_BLOQUE", i + 1) { establecerTipoLetra(it.toString()) }
                     dibujarFiguraBloque(canvas, y, obtenerFigura("FIGURA_BLOQUE", i + 1, "RECTANGULO"))
                     aplicarConfig("COLOR_TEXTO_BLOQUE", i + 1) { textPaint.color = it as Int }
 
@@ -105,7 +109,7 @@ class DiagramaFlujoView(context: Context) : View(context) {
                     aplicarDefault(i + 1)
                     aplicarConfig("COLOR_BLOQUE", i + 1) { shapePaint.color = it as Int }
                     aplicarConfig("LETRA_SIZE_BLOQUE", i + 1) { textPaint.textSize = it as Float }
-                    aplicarConfig("LETRA_BLOQUE", i + 1) { setTypeface(it.toString()) }
+                    aplicarConfig("LETRA_BLOQUE", i + 1) { establecerTipoLetra(it.toString()) }
                     dibujarFiguraBloque(canvas, y, obtenerFigura("FIGURA_BLOQUE", i + 1, "RECTANGULO"))
                     aplicarConfig("COLOR_TEXTO_BLOQUE", i + 1) { textPaint.color = it as Int }
 
@@ -116,7 +120,7 @@ class DiagramaFlujoView(context: Context) : View(context) {
                     aplicarDefault(i + 1)
                     aplicarConfig("COLOR_BLOQUE", i + 1) { shapePaint.color = it as Int }
                     aplicarConfig("LETRA_SIZE_BLOQUE", i + 1) { textPaint.textSize = it as Float }
-                    aplicarConfig("LETRA_BLOQUE", i + 1) { setTypeface(it.toString()) }
+                    aplicarConfig("LETRA_BLOQUE", i + 1) { establecerTipoLetra(it.toString()) }
                     dibujarFiguraBloque(canvas, y, obtenerFigura("FIGURA_BLOQUE", i + 1, "RECTANGULO"))
                     aplicarConfig("COLOR_TEXTO_BLOQUE", i + 1) { textPaint.color = it as Int }
 
@@ -127,7 +131,7 @@ class DiagramaFlujoView(context: Context) : View(context) {
                     aplicarDefault(i + 1)
                     aplicarConfig("COLOR_SI", i + 1) { shapePaint.color = it as Int }
                     aplicarConfig("LETRA_SIZE_SI", i + 1) { textPaint.textSize = it as Float }
-                    aplicarConfig("LETRA_SI", i + 1) { setTypeface(it.toString()) }
+                    aplicarConfig("LETRA_SI", i + 1) { establecerTipoLetra(it.toString()) }
                     dibujarFiguraSi(canvas, y, obtenerFigura("FIGURA_SI", i + 1, "ROMBO"))
                     aplicarConfig("COLOR_TEXTO_SI", i + 1) { textPaint.color = it as Int }
 
@@ -138,7 +142,7 @@ class DiagramaFlujoView(context: Context) : View(context) {
                     aplicarDefault(i + 1)
                     aplicarConfig("COLOR_MIENTRAS", i + 1) { shapePaint.color = it as Int }
                     aplicarConfig("LETRA_SIZE_MIENTRAS", i + 1) { textPaint.textSize = it as Float }
-                    aplicarConfig("LETRA_MIENTRAS", i + 1) { setTypeface(it.toString()) }
+                    aplicarConfig("LETRA_MIENTRAS", i + 1) { establecerTipoLetra(it.toString()) }
                     dibujarFiguraMientras(canvas, y, obtenerFigura("FIGURA_MIENTRAS", i + 1, "RECTANGULO"))
                     aplicarConfig("COLOR_TEXTO_MIENTRAS", i + 1) { textPaint.color = it as Int }
 
@@ -146,6 +150,7 @@ class DiagramaFlujoView(context: Context) : View(context) {
                 }
             }
             y += 150f
+            i++
         }
     }
 
@@ -175,7 +180,7 @@ class DiagramaFlujoView(context: Context) : View(context) {
     }
 
     // Este método traduce el nombre lógico de fuente a una familia disponible en Android.
-    private fun setTypeface(nombre: String) {
+    private fun establecerTipoLetra(nombre: String) {
         textPaint.typeface = when (nombre.uppercase()) {
             "ARIAL" -> Typeface.SANS_SERIF
             "TIMES_NEW_ROMAN" -> Typeface.SERIF
@@ -189,13 +194,12 @@ class DiagramaFlujoView(context: Context) : View(context) {
     private fun dibujarFiguraSi(canvas: Canvas, y: Float, figura: String) {
         when (figura.uppercase()) {
             "ROMBO" -> {
-                val path = Path().apply {
-                    moveTo(250f, y)
-                    lineTo(400f, y + 50f)
-                    lineTo(250f, y + 100f)
-                    lineTo(100f, y + 50f)
-                    close()
-                }
+                val path = Path()
+                path.moveTo(250f, y)
+                path.lineTo(400f, y + 50f)
+                path.lineTo(250f, y + 100f)
+                path.lineTo(100f, y + 50f)
+                path.close()
                 canvas.drawPath(path, shapePaint)
             }
 
@@ -213,13 +217,12 @@ class DiagramaFlujoView(context: Context) : View(context) {
             "ELIPSE" -> canvas.drawOval(100f, y, 400f, y + 100f, shapePaint)
             "RECTANGULO" -> canvas.drawRect(100f, y, 400f, y + 100f, shapePaint)
             "ROMBO" -> {
-                val path = Path().apply {
-                    moveTo(250f, y)
-                    lineTo(400f, y + 50f)
-                    lineTo(250f, y + 100f)
-                    lineTo(100f, y + 50f)
-                    close()
-                }
+                val path = Path()
+                path.moveTo(250f, y)
+                path.lineTo(400f, y + 50f)
+                path.lineTo(250f, y + 100f)
+                path.lineTo(100f, y + 50f)
+                path.close()
                 canvas.drawPath(path, shapePaint)
             }
             else -> canvas.drawRect(100f, y, 400f, y + 100f, shapePaint)
@@ -231,13 +234,12 @@ class DiagramaFlujoView(context: Context) : View(context) {
         when (figura.uppercase()) {
             "RECTANGULO" -> canvas.drawRect(100f, y, 400f, y + 100f, shapePaint)
             "PARALELOGRAMO" -> {
-                val path = Path().apply {
-                    moveTo(120f, y)
-                    lineTo(400f, y)
-                    lineTo(380f, y + 100f)
-                    lineTo(100f, y + 100f)
-                    close()
-                }
+                val path = Path()
+                path.moveTo(120f, y)
+                path.lineTo(400f, y)
+                path.lineTo(380f, y + 100f)
+                path.lineTo(100f, y + 100f)
+                path.close()
                 canvas.drawPath(path, shapePaint)
             }
 
@@ -249,13 +251,12 @@ class DiagramaFlujoView(context: Context) : View(context) {
             "ELIPSE" -> canvas.drawOval(100f, y, 400f, y + 100f, shapePaint)
             "CIRCULO" -> canvas.drawCircle(250f, y + 50f, 50f, shapePaint)
             "ROMBO" -> {
-                val path = Path().apply {
-                    moveTo(250f, y)
-                    lineTo(400f, y + 50f)
-                    lineTo(250f, y + 100f)
-                    lineTo(100f, y + 50f)
-                    close()
-                }
+                val path = Path()
+                path.moveTo(250f, y)
+                path.lineTo(400f, y + 50f)
+                path.lineTo(250f, y + 100f)
+                path.lineTo(100f, y + 50f)
+                path.close()
                 canvas.drawPath(path, shapePaint)
             }
             else -> canvas.drawRect(100f, y, 400f, y + 100f, shapePaint)
