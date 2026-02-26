@@ -7,132 +7,132 @@ package compi.practica_1_compi.parser;
 
 /** CUP generated class containing symbol constants. */
 public class sym {
-    /* terminals */
-    public static final int COLOR_TEXTO_BLOQUE = 43;
-    public static final int POR = 15;
-    public static final int LETRA_SIZE_MIENTRAS = 42;
-    public static final int ENTERO = 59;
-    public static final int SI = 5;
-    public static final int MOSTRAR = 11;
-    public static final int FIGURA_BLOQUE = 45;
-    public static final int DIFERENTE = 18;
-    public static final int LETRA_MIENTRAS = 41;
-    public static final int ENTONCES = 6;
-    public static final int RECTANGULO_REDONDEADO = 53;
-    public static final int SEPARADOR = 29;
-    public static final int FIN = 3;
-    public static final int NOT = 25;
-    public static final int AND = 23;
-    public static final int IGUAL = 17;
-    public static final int FINMIENTRAS = 10;
-    public static final int OR = 24;
-    public static final int MIENTRAS = 8;
-    public static final int LETRA_SIZE_BLOQUE = 47;
-    public static final int PAREN_DER = 28;
-    public static final int DIV = 16;
-    public static final int ARIAL = 54;
-    public static final int CIRCULO = 49;
-    public static final int ID = 58;
-    public static final int DECIMAL = 60;
-    public static final int EOF = 0;
-    public static final int error = 1;
-    public static final int COLOR_BLOQUE = 44;
-    public static final int COMA = 31;
-    public static final int CADENA = 61;
-    public static final int COMIC_SANS = 56;
-    public static final int MENOS = 14;
-    public static final int COLOR_MIENTRAS = 39;
-    public static final int MENOR = 20;
-    public static final int COLOR_TEXTO_MIENTRAS = 38;
-    public static final int VERDANA = 57;
-    public static final int LETRA_BLOQUE = 46;
-    public static final int TIMES_NEW_ROMAN = 55;
-    public static final int ASIGNACION = 26;
-    public static final int MAYOR = 19;
-    public static final int ELIPSE = 48;
-    public static final int BARRA = 30;
-    public static final int ROMBO = 52;
-    public static final int RECTANGULO = 51;
-    public static final int FIGURA_MIENTRAS = 40;
-    public static final int DEFAULT = 32;
-    public static final int MAYOR_IGUAL = 21;
-    public static final int LEER = 12;
-    public static final int HACER = 9;
-    public static final int LETRA_SI = 36;
-    public static final int COLOR_SI = 34;
-    public static final int PARALELOGRAMO = 50;
-    public static final int INICIO = 2;
-    public static final int MENOR_IGUAL = 22;
-    public static final int FINSI = 7;
-    public static final int COLOR_TEXTO_SI = 33;
-    public static final int FIGURA_SI = 35;
-    public static final int VAR = 4;
-    public static final int PAREN_IZQ = 27;
-    public static final int LETRA_SIZE_SI = 37;
-    public static final int MAS = 13;
-    public static final String[] terminalNames = new String[] {
-            "EOF",
-            "error",
-            "INICIO",
-            "FIN",
-            "VAR",
-            "SI",
-            "ENTONCES",
-            "FINSI",
-            "MIENTRAS",
-            "HACER",
-            "FINMIENTRAS",
-            "MOSTRAR",
-            "LEER",
-            "MAS",
-            "MENOS",
-            "POR",
-            "DIV",
-            "IGUAL",
-            "DIFERENTE",
-            "MAYOR",
-            "MENOR",
-            "MAYOR_IGUAL",
-            "MENOR_IGUAL",
-            "AND",
-            "OR",
-            "NOT",
-            "ASIGNACION",
-            "PAREN_IZQ",
-            "PAREN_DER",
-            "SEPARADOR",
-            "BARRA",
-            "COMA",
-            "DEFAULT",
-            "COLOR_TEXTO_SI",
-            "COLOR_SI",
-            "FIGURA_SI",
-            "LETRA_SI",
-            "LETRA_SIZE_SI",
-            "COLOR_TEXTO_MIENTRAS",
-            "COLOR_MIENTRAS",
-            "FIGURA_MIENTRAS",
-            "LETRA_MIENTRAS",
-            "LETRA_SIZE_MIENTRAS",
-            "COLOR_TEXTO_BLOQUE",
-            "COLOR_BLOQUE",
-            "FIGURA_BLOQUE",
-            "LETRA_BLOQUE",
-            "LETRA_SIZE_BLOQUE",
-            "ELIPSE",
-            "CIRCULO",
-            "PARALELOGRAMO",
-            "RECTANGULO",
-            "ROMBO",
-            "RECTANGULO_REDONDEADO",
-            "ARIAL",
-            "TIMES_NEW_ROMAN",
-            "COMIC_SANS",
-            "VERDANA",
-            "ID",
-            "ENTERO",
-            "DECIMAL",
-            "CADENA"
-    };
+  /* terminals */
+  public static final int COLOR_TEXTO_BLOQUE = 43;
+  public static final int POR = 15;
+  public static final int LETRA_SIZE_MIENTRAS = 42;
+  public static final int ENTERO = 59;
+  public static final int SI = 5;
+  public static final int MOSTRAR = 11;
+  public static final int FIGURA_BLOQUE = 45;
+  public static final int DIFERENTE = 18;
+  public static final int LETRA_MIENTRAS = 41;
+  public static final int ENTONCES = 6;
+  public static final int RECTANGULO_REDONDEADO = 53;
+  public static final int SEPARADOR = 29;
+  public static final int FIN = 3;
+  public static final int NOT = 25;
+  public static final int AND = 23;
+  public static final int IGUAL = 17;
+  public static final int FINMIENTRAS = 10;
+  public static final int OR = 24;
+  public static final int MIENTRAS = 8;
+  public static final int LETRA_SIZE_BLOQUE = 47;
+  public static final int PAREN_DER = 28;
+  public static final int DIV = 16;
+  public static final int ARIAL = 54;
+  public static final int CIRCULO = 49;
+  public static final int ID = 58;
+  public static final int DECIMAL = 60;
+  public static final int EOF = 0;
+  public static final int error = 1;
+  public static final int COLOR_BLOQUE = 44;
+  public static final int COMA = 31;
+  public static final int CADENA = 61;
+  public static final int COMIC_SANS = 56;
+  public static final int MENOS = 14;
+  public static final int COLOR_MIENTRAS = 39;
+  public static final int MENOR = 20;
+  public static final int COLOR_TEXTO_MIENTRAS = 38;
+  public static final int VERDANA = 57;
+  public static final int LETRA_BLOQUE = 46;
+  public static final int TIMES_NEW_ROMAN = 55;
+  public static final int ASIGNACION = 26;
+  public static final int MAYOR = 19;
+  public static final int ELIPSE = 48;
+  public static final int BARRA = 30;
+  public static final int ROMBO = 52;
+  public static final int RECTANGULO = 51;
+  public static final int FIGURA_MIENTRAS = 40;
+  public static final int DEFAULT = 32;
+  public static final int MAYOR_IGUAL = 21;
+  public static final int LEER = 12;
+  public static final int HACER = 9;
+  public static final int LETRA_SI = 36;
+  public static final int COLOR_SI = 34;
+  public static final int PARALELOGRAMO = 50;
+  public static final int INICIO = 2;
+  public static final int MENOR_IGUAL = 22;
+  public static final int FINSI = 7;
+  public static final int COLOR_TEXTO_SI = 33;
+  public static final int FIGURA_SI = 35;
+  public static final int VAR = 4;
+  public static final int PAREN_IZQ = 27;
+  public static final int LETRA_SIZE_SI = 37;
+  public static final int MAS = 13;
+  public static final String[] terminalNames = new String[] {
+  "EOF",
+  "error",
+  "INICIO",
+  "FIN",
+  "VAR",
+  "SI",
+  "ENTONCES",
+  "FINSI",
+  "MIENTRAS",
+  "HACER",
+  "FINMIENTRAS",
+  "MOSTRAR",
+  "LEER",
+  "MAS",
+  "MENOS",
+  "POR",
+  "DIV",
+  "IGUAL",
+  "DIFERENTE",
+  "MAYOR",
+  "MENOR",
+  "MAYOR_IGUAL",
+  "MENOR_IGUAL",
+  "AND",
+  "OR",
+  "NOT",
+  "ASIGNACION",
+  "PAREN_IZQ",
+  "PAREN_DER",
+  "SEPARADOR",
+  "BARRA",
+  "COMA",
+  "DEFAULT",
+  "COLOR_TEXTO_SI",
+  "COLOR_SI",
+  "FIGURA_SI",
+  "LETRA_SI",
+  "LETRA_SIZE_SI",
+  "COLOR_TEXTO_MIENTRAS",
+  "COLOR_MIENTRAS",
+  "FIGURA_MIENTRAS",
+  "LETRA_MIENTRAS",
+  "LETRA_SIZE_MIENTRAS",
+  "COLOR_TEXTO_BLOQUE",
+  "COLOR_BLOQUE",
+  "FIGURA_BLOQUE",
+  "LETRA_BLOQUE",
+  "LETRA_SIZE_BLOQUE",
+  "ELIPSE",
+  "CIRCULO",
+  "PARALELOGRAMO",
+  "RECTANGULO",
+  "ROMBO",
+  "RECTANGULO_REDONDEADO",
+  "ARIAL",
+  "TIMES_NEW_ROMAN",
+  "COMIC_SANS",
+  "VERDANA",
+  "ID",
+  "ENTERO",
+  "DECIMAL",
+  "CADENA"
+  };
 }
 

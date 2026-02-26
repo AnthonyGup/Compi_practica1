@@ -2,6 +2,8 @@ package com.cunoc.compi1.compiler
 
 object ParseErrorHelper {
 
+    // Este método construye un reporte acotado de errores y agrega contexto de línea
+    // para facilitar el diagnóstico sin saturar la salida.
     fun buildDetailedErrorReport(
         titulo: String,
         errores: List<String>,
@@ -36,6 +38,8 @@ object ParseErrorHelper {
         return mensaje.toString()
     }
 
+    // Este método resume una excepción interna y conserva el origen más cercano
+    // del fallo para soporte técnico.
     fun buildExceptionReport(e: Exception, codigo: String): String {
         val frame = e.stackTrace.firstOrNull()
         val origen = if (frame != null) {
@@ -55,6 +59,8 @@ object ParseErrorHelper {
             .toString()
     }
 
+    // Este método intenta recuperar la línea exacta asociada a un error textual
+    // usando extracción por expresión regular.
     private fun extractContext(error: String, codigo: String): String? {
         val lineRegex = Regex("L[ií]nea:\\s*(\\d+)", RegexOption.IGNORE_CASE)
         val lineNumber = lineRegex.find(error)?.groupValues?.getOrNull(1)?.toIntOrNull() ?: return null

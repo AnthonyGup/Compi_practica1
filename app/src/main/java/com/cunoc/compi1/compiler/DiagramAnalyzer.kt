@@ -1,9 +1,7 @@
 package com.cunoc.compi1.compiler
 
 import com.cunoc.compi1.nodos.ConfigBuilder
-import com.cunoc.compi1.nodos.Configuracion
 import com.cunoc.compi1.nodos.GraphBuilder
-import com.cunoc.compi1.nodos.Nodo
 import compi.practica_1_compi.lexer.Lexer
 import compi.practica_1_compi.parser.parser
 import compi.practica_1_compi.parser.sym
@@ -12,16 +10,9 @@ import java_cup.runtime.Symbol
 
 object DiagramAnalyzer {
 
-    sealed class Result {
-        data class Success(
-            val nodos: List<Nodo>,
-            val configuraciones: Map<String, Map<Int, Configuracion>>
-        ) : Result()
-
-        data class Error(val message: String) : Result()
-    }
-
-    fun analyze(codigo: String): Result {
+    // Este método coordina el ciclo completo de análisis: parseo, validación de errores,
+    // construcción del grafo de nodos y extracción de configuraciones.
+    fun analyze(codigo: String): AnalyzerResult {
         return try {
             val lexer = Lexer(StringReader(codigo))
             val parser = parser(lexer)
@@ -35,7 +26,7 @@ object DiagramAnalyzer {
 
             val lexicalErrors = lexer.getLexicalErrors()
             if (lexicalErrors.isNotEmpty()) {
-                return Result.Error(ParseErrorHelper.buildDetailedErrorReport(
+                return AnalyzerError(ParseErrorHelper.buildDetailedErrorReport(
                     titulo = "Errores lexicos",
                     errores = lexicalErrors,
                     codigo = codigo,
@@ -46,10 +37,10 @@ object DiagramAnalyzer {
 
             val syntaxErrors = parser.getSyntaxErrors()
             val tokens = lexer.getTokens()
-            val useLegacyCompatibility = canBypassLegacyParser(syntaxErrors, tokens)
+            val canBypassColorSyntax = canBypassColorSyntaxErrors(syntaxErrors, tokens)
 
-            if (syntaxErrors.isNotEmpty() && !useLegacyCompatibility) {
-                return Result.Error(ParseErrorHelper.buildDetailedErrorReport(
+            if (syntaxErrors.isNotEmpty() && !canBypassColorSyntax) {
+                return AnalyzerError(ParseErrorHelper.buildDetailedErrorReport(
                     titulo = "Errores sintacticos",
                     errores = syntaxErrors,
                     codigo = codigo,
@@ -58,92 +49,45 @@ object DiagramAnalyzer {
                 )
             }
 
-            if (parseException != null && !useLegacyCompatibility)
-                return Result.Error(ParseErrorHelper.buildExceptionReport(parseException, codigo))
+            if (parseException != null && !canBypassColorSyntax)
+                return AnalyzerError(ParseErrorHelper.buildExceptionReport(parseException, codigo))
 
             val nodos = GraphBuilder.construir(tokens)
             val configuraciones = ConfigBuilder.construir(tokens)
-            Result.Success(nodos, configuraciones)
+            AnalyzerSuccess(nodos, configuraciones)
         } catch (e: Exception) {
-            Result.Error(ParseErrorHelper.buildExceptionReport(e, codigo))
+            AnalyzerError(ParseErrorHelper.buildExceptionReport(e, codigo))
         }
     }
 
-    private fun canBypassLegacyParser(
+    // Este método habilita una compatibilidad temporal cuando los únicos errores
+    // sintácticos corresponden a comas en configuraciones de color RGB.
+    private fun canBypassColorSyntaxErrors(
         syntaxErrors: List<String>,
         tokens: List<Symbol>
     ): Boolean {
         if (syntaxErrors.isEmpty()) return false
 
-        val comparisonSymbols = setOf(
-            sym.IGUAL,
-            sym.DIFERENTE,
-            sym.MAYOR,
-            sym.MENOR,
-            sym.MAYOR_IGUAL,
-            sym.MENOR_IGUAL,
-            sym.AND,
-            sym.OR,
-            sym.NOT
+        val colorConfigSymbols = setOf(
+            sym.COLOR_TEXTO_SI,
+            sym.COLOR_SI,
+            sym.COLOR_TEXTO_MIENTRAS,
+            sym.COLOR_MIENTRAS,
+            sym.COLOR_TEXTO_BLOQUE,
+            sym.COLOR_BLOQUE
         )
 
-        val hasComparisonToken = tokens.any { token -> token.sym in comparisonSymbols }
-        val configKeys = setOf(
-            sym.FIGURA_SI,
-            sym.FIGURA_MIENTRAS,
-            sym.FIGURA_BLOQUE,
-            sym.LETRA_SI,
-            sym.LETRA_MIENTRAS,
-            sym.LETRA_BLOQUE
-        )
+        val hasColorConfig = tokens.any { it.sym in colorConfigSymbols }
+        val hasComma = tokens.any { it.sym == sym.COMA }
+        if (!hasColorConfig || !hasComma) return false
 
-        val configLiteralSymbols = setOf(
-            sym.ELIPSE,
-            sym.CIRCULO,
-            sym.PARALELOGRAMO,
-            sym.RECTANGULO,
-            sym.ROMBO,
-            sym.RECTANGULO_REDONDEADO,
-            sym.ARIAL,
-            sym.TIMES_NEW_ROMAN,
-            sym.COMIC_SANS,
-            sym.VERDANA
-        )
-
-        val hasConfigLiteralToken = tokens.any { token -> token.sym in configLiteralSymbols }
-            && tokens.any { token -> token.sym in configKeys }
-
-        if (!hasComparisonToken && !hasConfigLiteralToken) return false
-
-        val relatedMarkers = listOf(
-            "Token inesperado: '>'",
-            "Token inesperado: '<'",
-            "Token inesperado: '>='",
-            "Token inesperado: '<='",
-            "Token inesperado: '!='",
-            "Token inesperado: '&&'",
-            "Token inesperado: '||'",
-            "Token inesperado: '!'",
-            "Token inesperado: 'IGUAL'",
-            "Token inesperado: 'DIFERENTE'",
-            "Token inesperado: 'MAYOR'",
-            "Token inesperado: 'MENOR'",
-            "Token inesperado: 'MAYOR_IGUAL'",
-            "Token inesperado: 'MENOR_IGUAL'",
-            "Token inesperado: 'ELIPSE'",
-            "Token inesperado: 'CIRCULO'",
-            "Token inesperado: 'PARALELOGRAMO'",
-            "Token inesperado: 'RECTANGULO'",
-            "Token inesperado: 'ROMBO'",
-            "Token inesperado: 'RECTANGULO_REDONDEADO'",
-            "Token inesperado: 'ARIAL'",
-            "Token inesperado: 'TIMES_NEW_ROMAN'",
-            "Token inesperado: 'COMIC_SANS'",
-            "Token inesperado: 'VERDANA'"
+        val allowedMarkers = listOf(
+            "Token inesperado: ','",
+            "Token inesperado: 'COMA'"
         )
 
         return syntaxErrors.all { err ->
-            relatedMarkers.any { marker -> err.contains(marker, ignoreCase = true) }
+            allowedMarkers.any { marker -> err.contains(marker, ignoreCase = true) }
         }
     }
 }

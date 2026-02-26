@@ -6,7 +6,16 @@ import java_cup.runtime.Symbol
 
 data class Configuracion(val tipo: String, val valor: Any, val indice: Int)
 
+private data class ParsedConfig(
+    val key: String,
+    val valor: Any,
+    val indice: Int,
+    val nextIndex: Int
+)
+
 object ConfigBuilder {
+    // Este método recorre la sección de configuración y construye un mapa por clave e índice,
+    // priorizando robustez ante entradas incompletas o parcialmente válidas.
     fun construir(tokens: List<Symbol>): Map<String, Map<Int, Configuracion>> {
         val configs = mutableMapOf<String, MutableMap<Int, Configuracion>>()
         var i = 0
@@ -52,13 +61,8 @@ object ConfigBuilder {
         return configs
     }
 
-    private data class ParsedConfig(
-        val key: String,
-        val valor: Any,
-        val indice: Int,
-        val nextIndex: Int
-    )
-
+    // Este método centraliza la escritura en el mapa para mantener una única ruta
+    // de actualización por clave e índice.
     private fun putConfig(
         configs: MutableMap<String, MutableMap<Int, Configuracion>>,
         key: String,
@@ -69,12 +73,15 @@ object ConfigBuilder {
         perIndex[indice] = Configuracion(key, valor, indice)
     }
 
+    // Este método valida y obtiene el índice objetivo de la directiva DEFAULT.
     private fun parseDefaultIndex(tokens: List<Symbol>, start: Int): Int? {
         if (start + 2 >= tokens.size) return null
         if (tokens[start + 1].sym != sym.ASIGNACION) return null
         return tokens[start + 2].value?.toString()?.toIntOrNull()
     }
 
+    // Este método parsea una configuración indexada con formato "clave = valor | índice",
+    // identificando límites de valor antes de la barra vertical.
     private fun parseIndexedConfig(tokens: List<Symbol>, start: Int, keySym: Int): ParsedConfig? {
         if (start + 4 >= tokens.size) return null
         if (tokens[start + 1].sym != sym.ASIGNACION) return null
@@ -108,6 +115,8 @@ object ConfigBuilder {
         )
     }
 
+    // Este método traduce el símbolo léxico de la clave al nombre canónico utilizado
+    // por el sistema de render y aplicación de estilos.
     private fun keyName(keySym: Int): String {
         return when (keySym) {
             sym.COLOR_TEXTO_SI -> "COLOR_TEXTO_SI"
@@ -129,6 +138,8 @@ object ConfigBuilder {
         }
     }
 
+    // Este método aplica conversión tipada por tipo de configuración para evitar
+    // conversiones ambiguas durante la fase de dibujo.
     private fun parseValueByKey(keySym: Int, rawValue: String): Any {
         return when (keySym) {
             sym.COLOR_TEXTO_SI,
@@ -146,6 +157,8 @@ object ConfigBuilder {
         }
     }
 
+    // Este método interpreta colores en formato hexadecimal con prefijo H, RGB con comas
+    // o formato reconocido por Android, con fallback seguro a negro.
     private fun parseColor(rawValue: String): Int {
         val str = rawValue.trim().replace(" ", "")
         return try {

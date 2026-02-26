@@ -5,6 +5,8 @@ import compi.practica_1_compi.parser.sym
 
 object GraphBuilder {
 
+    // Este método recorre secuencialmente los tokens y traduce cada instrucción
+    // reconocida a su representación intermedia como nodo.
     fun construir(tokens: List<Symbol>): List<Nodo> {
         val nodos = mutableListOf<Nodo>()
         var i = 0
@@ -25,8 +27,11 @@ object GraphBuilder {
                     var valor: String? = null
 
                     if (i + 3 < tokens.size && tokens[i + 2].sym == sym.ASIGNACION) {
-                        valor = tokens[i + 3].value?.toString()
-                        i += 3
+                        val exprEnd = findExpressionEnd(tokens, i + 3)
+                        valor = tokens.subList(i + 3, exprEnd)
+                            .joinToString(" ") { it.value?.toString() ?: "" }
+                            .trim()
+                        i = exprEnd - 1
                     } else {
                         i += 1
                     }
@@ -37,9 +42,12 @@ object GraphBuilder {
                 sym.ID -> {
                     if (i + 2 < tokens.size && tokens[i + 1].sym == sym.ASIGNACION) {
                         val nombre = tokens[i].value.toString()
-                        val expr = tokens[i + 2].value?.toString() ?: ""
+                        val exprEnd = findExpressionEnd(tokens, i + 2)
+                        val expr = tokens.subList(i + 2, exprEnd)
+                            .joinToString(" ") { it.value?.toString() ?: "" }
+                            .trim()
                         nodos.add(AsignacionNodo(nombre, expr))
-                        i += 2
+                        i = exprEnd - 1
                     }
                 }
 
@@ -90,6 +98,8 @@ object GraphBuilder {
         return nodos
     }
 
+    // Este método extrae el texto de la condición delimitada por paréntesis,
+    // preservando el orden original de los tokens internos.
     private fun readCondition(tokens: List<Symbol>, start: Int): String {
         val open = indexAfter(tokens, start, sym.PAREN_IZQ)
         if (open == -1) return ""
@@ -105,6 +115,8 @@ object GraphBuilder {
             .trim()
     }
 
+    // Este método localiza la primera aparición del símbolo objetivo y retorna
+    // la posición inmediata siguiente para facilitar cortes de sublistas.
     private fun indexAfter(tokens: List<Symbol>, start: Int, targetSym: Int): Int {
         var i = start
         while (i < tokens.size) {
@@ -114,6 +126,8 @@ object GraphBuilder {
         return -1
     }
 
+    // Este método calcula el cierre de un bloque soportando anidación de estructuras
+    // del mismo tipo mediante un contador de profundidad.
     private fun findBlockEnd(
         tokens: List<Symbol>,
         from: Int,
@@ -135,5 +149,67 @@ object GraphBuilder {
             i++
         }
         return tokens.size
+    }
+
+    // Este método determina dónde finaliza una expresión lineal antes del inicio
+    // de la siguiente instrucción o sección de configuración.
+    private fun findExpressionEnd(tokens: List<Symbol>, from: Int): Int {
+        if (from !in tokens.indices) return from
+
+        var i = from
+        while (i < tokens.size) {
+            if (isExpressionBoundary(tokens, i, from)) {
+                return i
+            }
+            i++
+        }
+        return tokens.size
+    }
+
+    // Este método define la regla de frontera de expresión para evitar consumir
+    // tokens que pertenecen a la siguiente sentencia.
+    private fun isExpressionBoundary(tokens: List<Symbol>, current: Int, exprStart: Int): Boolean {
+        if (current < exprStart || current >= tokens.size) return false
+
+        val statementStarters = setOf(
+            sym.INICIO,
+            sym.FIN,
+            sym.VAR,
+            sym.MOSTRAR,
+            sym.LEER,
+            sym.SI,
+            sym.MIENTRAS,
+            sym.FINSI,
+            sym.FINMIENTRAS,
+            sym.SEPARADOR,
+            sym.DEFAULT,
+            sym.COLOR_TEXTO_SI,
+            sym.COLOR_SI,
+            sym.FIGURA_SI,
+            sym.LETRA_SI,
+            sym.LETRA_SIZE_SI,
+            sym.COLOR_TEXTO_MIENTRAS,
+            sym.COLOR_MIENTRAS,
+            sym.FIGURA_MIENTRAS,
+            sym.LETRA_MIENTRAS,
+            sym.LETRA_SIZE_MIENTRAS,
+            sym.COLOR_TEXTO_BLOQUE,
+            sym.COLOR_BLOQUE,
+            sym.FIGURA_BLOQUE,
+            sym.LETRA_BLOQUE,
+            sym.LETRA_SIZE_BLOQUE
+        )
+
+        if (tokens[current].sym in statementStarters) return true
+
+        if (current > exprStart &&
+            tokens[current].sym == sym.ID &&
+            current + 1 < tokens.size &&
+            tokens[current + 1].sym == sym.ASIGNACION
+        ) {
+            return true
+        }
+
+        return false
     }
 }

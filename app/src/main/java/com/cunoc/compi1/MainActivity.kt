@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import com.cunoc.compi1.compiler.AnalyzerError
+import com.cunoc.compi1.compiler.AnalyzerSuccess
 import com.cunoc.compi1.compiler.DiagramAnalyzer
 import com.cunoc.compi1.nodos.DiagramaFlujoView
 
@@ -26,14 +29,20 @@ class MainActivity : AppCompatActivity() {
             }
 
             when (val result = DiagramAnalyzer.analyze(codigo)) {
-                is DiagramAnalyzer.Result.Error -> inputText.error = result.message
-                is DiagramAnalyzer.Result.Success -> {
+                is AnalyzerError -> inputText.error = result.message
+                is AnalyzerSuccess -> {
                     val diagramaView = DiagramaFlujoView(this).apply {
                         nodos = result.nodos
                         configuraciones = result.configuraciones
                     }
                     container.removeAllViews()
-                    container.addView(diagramaView)
+                    container.addView(
+                        diagramaView,
+                        FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    )
                 }
             }
         }
